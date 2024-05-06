@@ -1,6 +1,6 @@
 # Techin-lab-6
 
-A simple web app to generate and download cover letter from the uploaded resume and entered job description and company using Gemini API and Streamlit.  
+It is an improvisation on lab5, A simple web app to generate and download cover letter from the uploaded resume and entered job description and company using Gemini API and Streamlit.  
 
 ## How to Run
 Open the terminal and run the following commands:
