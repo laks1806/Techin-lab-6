@@ -1,0 +1,9 @@
+azure-storage-blob
+streamlit
+python-dotenv
+psycopg2-binary
+beautifulsoup4
+tqdm
+google-generativeai
+Pypdf2
+reportlab
