@@ -28,7 +28,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 streamlit run app.py
 ```
-Or just go the link : [Cover Letter Generator]([https://techin-lab5-coverlettergenerator.streamlit.app/)](Cover Letter Generator)
+Or just go the link : [Cover Letter Generator] (https://laks1806-techin-lab-6-app-vgyk5l.streamlit.app/)
 
 ## What's Included
 
