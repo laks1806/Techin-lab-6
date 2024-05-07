@@ -13,6 +13,13 @@ load_dotenv()
 genai.configure(api_key=getenv("GOOGLE_API_KEY"))
 model = genai.GenerativeModel('gemini-pro')
 
+# Default example cover letter
+default_example = {
+    "cover_letter": "Dear Hiring Manager,\n\nI am excited to submit my application for the [Job Title] role at [Company Name]. With my extensive experience in [relevant field or industry], I believe I possess the skills and expertise necessary to make a significant contribution to your organization.\n\n[...]\n\nThank you for your consideration, and I look forward to discussing my qualifications further.\n\nSincerely,\n[Your Name]",
+    "resume": "",
+    "job_description": ""
+}
+
 def extract_text_from_pdf(file):
     pdf_reader = PdfReader(file)
     text = ""
@@ -21,8 +28,13 @@ def extract_text_from_pdf(file):
         text += page.extract_text()
     return text
 
-def generate_cover_letter(resume_text, job_description, company_name):
-    prompt = f"Generate a cover letter based on the following resume:\n\n{resume_text}\n\nfor the following job description at {company_name}:\n\n{job_description}"
+def generate_cover_letter(resume_text, job_description, company_name, examples):
+    prompt = f"Here are some examples of well-written cover letters, along with their corresponding resumes and job descriptions:\n\n"
+    for example in examples:
+        prompt += f"Cover Letter:\n{example['cover_letter']}\n\nResume:\n{example['resume']}\n\nJob Description:\n{example['job_description']}\n\n"
+
+    prompt += f"Based on the examples above, generate a cover letter based on the following resume:\n\n{resume_text}\n\nfor the following job description at {company_name}:\n\n{job_description}"
+
     response = model.generate_content(prompt)
     return response.text
 
@@ -33,6 +45,8 @@ def main():
         st.session_state.resume_text = None
     if 'cover_letter' not in st.session_state:
         st.session_state.cover_letter = None
+    if 'examples' not in st.session_state:
+        st.session_state.examples = [default_example]
 
     uploaded_file = st.file_uploader("Upload your resume (PDF)", type="pdf")
     if uploaded_file is not None:
@@ -43,10 +57,15 @@ def main():
     company_name = st.text_input("Enter company name:")
     job_description = st.text_area("Enter job description:")
 
+    example_cover_letter = st.text_area("Edit or replace the example cover letter:", value=st.session_state.examples[0]['cover_letter'])
+    if st.button("Update Example"):
+        st.session_state.examples[0]['cover_letter'] = example_cover_letter
+        st.success("Example updated successfully!")
+
     if st.button("Generate Cover Letter"):
         with st.spinner("Your cover letter is being generated!! Hang Tight!"):
             if st.session_state.resume_text is not None and job_description and company_name:
-                cover_letter = generate_cover_letter(st.session_state.resume_text, job_description, company_name)
+                cover_letter = generate_cover_letter(st.session_state.resume_text, job_description, company_name, st.session_state.examples)
                 st.session_state.cover_letter = cover_letter
                 st.write("Generated Cover Letter:")
                 st.write(cover_letter)
